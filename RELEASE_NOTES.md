@@ -181,6 +181,12 @@ changes (where available).
 - Added a "copy to clipboard" export storage, which places the
   exported images on the system clipboard.
 
+- A workspace button in the top toolbar, between the keyboard shortcuts
+  button and the preferences button, opens a menu to switch workspaces
+  or create a new workspace (blank by default + optional copy). Workspace
+  button only appears when "allow for multiple workspaces" is enabled.
+  Switching or creating relaunches darktable into the chosen workspace.
+
 - The lens correction module now warns when it applies Lensfun
   vignetting correction to a Panasonic RW2 or Olympus ORF file shot
   with the camera's shading compensation on, which can overcorrect the
@@ -239,6 +245,12 @@ changes (where available).
 - Hovering over and dragging nodes of long drawn brush strokes and
   paths is much faster, as the mask overlay is no longer redrawn on
   every mouse move and long outlines are drawn with far fewer points.
+
+- Lens correction with lensfun is faster on the OpenCL path: lensfun
+  is now asked for its corrections on a coarse grid instead of for
+  every pixel, so the CPU no longer computes and uploads hundreds of
+  megabytes on each run. The correction is also more precise on x86,
+  where it could be up to 0.3 px off, or 0.6 px when distorting.
 
 ## Other Changes
 
@@ -774,6 +786,20 @@ changes (where available).
   diffusion weights with a coarse approximation of the exponential.
   Edits using anisotropy may now look slightly different when exported
   without OpenCL.
+
+- Fixed the non-local means modes of denoise (profiled) and astrophoto
+  denoise giving a different result with OpenCL than on the CPU: the
+  OpenCL path gave the horizontal neighbors twice their weight. Edits
+  using them may look slightly different when exported with OpenCL.
+
+- The non-local means modes of denoise (profiled) and astrophoto
+  denoise now treat the image edges the same way on the CPU and with
+  OpenCL, by mirroring the image. Before, the two gave different
+  results in a band along the edges. Edits using them may look
+  slightly different near the edges.
+
+- Fixed PPG demosaic with an edge threshold giving different pixels
+  along the image edges with OpenCL than on the CPU.
 
 ## Lua
 
